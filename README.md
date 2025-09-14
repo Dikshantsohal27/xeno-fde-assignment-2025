@@ -152,3 +152,5 @@ Authentication uses email/password + JWT instead of full Shopify OAuth.
 Deployment instructions assume local development.
 (Can be extended to Vercel, Railway, or Heroku for production).
 
+vercel link
+https://xeno-fde-assignment-2025-zrk6.vercel.app/
