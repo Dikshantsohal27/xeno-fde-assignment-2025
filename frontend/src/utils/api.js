@@ -1,6 +1,6 @@
 // frontend/src/utils/api.js
 
-const API_BASE_URL = 'http://localhost:5000';
+const API_BASE_URL = 'https://xeno-fde-assignment-2025-4.onrender.com/';
 
 // Auth API
 export const login = async (email, password) => {
