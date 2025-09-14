@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// The Tenant model represents a single Shopify store
+model Tenant {
+  id            Int       @id @default(autoincrement())
+  shopifyDomain String    @unique // e.g., "mystore.myshopify.com"
+  accessToken   String    // Private App Access Token or OAuth Token
+  name          String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  customers Customer[]
+  orders    Order[]
+  products  Product[]
+}
+model User {
+  id            Int       @id @default(autoincrement())
+  email         String    @unique
+  password      String    // You can leave empty for now
+  isVerified    Boolean   @default(false)
+  verifyToken   String?
+  verifyExpires DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+// The Customer model
+model Customer {
+  id               BigInt    @id @default(autoincrement())
+  shopifyCustomerId String   @unique
+  tenant           Tenant    @relation(fields: [tenantId], references: [id])
+  tenantId         Int       // ← References Tenant.id (Int) → CORRECT
+
+  email            String?
+  firstName        String?
+  lastName         String?
+  totalSpent       Float     @default(0)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  // Relations
+  orders           Order[]
+}
+
+// The Order model
+model Order {
+  id               BigInt    @id @default(autoincrement())
+  shopifyOrderId   String    @unique
+  tenant           Tenant    @relation(fields: [tenantId], references: [id])
+  tenantId         Int       // ← References Tenant.id (Int) → CORRECT
+
+  customerId       BigInt?   // ← References Customer.id (BigInt) → FIXED!
+  customer         Customer? @relation(fields: [customerId], references: [id])
+
+  totalPrice       Float
+  currency         String
+  createdAt        DateTime  // This will be pulled from Shopify
+  updatedAt        DateTime  @updatedAt
+}
+
+// The Product model
+model Product {
+  id               BigInt    @id @default(autoincrement())
+  shopifyProductId String    @unique
+  tenant           Tenant    @relation(fields: [tenantId], references: [id])
+  tenantId         Int       // ← References Tenant.id (Int) → CORRECT
+
+  title            String
+  price            Float
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
