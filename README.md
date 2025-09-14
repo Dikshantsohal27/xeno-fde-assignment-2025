@@ -1,6 +1,7 @@
  ⚙️ Setup Instructions
  🔹 Backend Setup
 ```bash
+🔹 Backend Setup
 cd backend
 npm install
 npx prisma migrate dev
